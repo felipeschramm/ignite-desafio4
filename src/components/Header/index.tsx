@@ -1,10 +1,13 @@
-import { Component } from "react";
 import { FiPlusSquare } from "react-icons/fi";
 
 import { Container } from "./styles";
 import Logo from "../../assets/logo.svg";
 
-const Header = ({ openModal }) => {
+interface IHeaderProps {
+  openModal: () => void;
+}
+
+const Header = ({ openModal }:IHeaderProps) => {
   return (
     <Container>
       <header>

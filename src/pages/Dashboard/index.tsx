@@ -1,5 +1,3 @@
-import { Component } from "react";
-
 import Header from "../../components/Header";
 import api from "../../services/api";
 import Food from "../../components/Food";
@@ -8,10 +6,11 @@ import ModalEditFood from "../../components/ModalEditFood";
 import { FoodsContainer } from "./styles";
 import { useState } from "react";
 import { useEffect } from "react";
+import { IFood } from "../../types";
 
 const Dashboard = () => {
-  const [foods, setFoods] = useState([]);
-  const [editingFood, setEditingFood] = useState<any>({});
+  const [foods, setFoods] = useState<IFood[]>([]);
+  const [editingFood, setEditingFood] = useState<IFood>();
   const [modalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
 
@@ -20,11 +19,13 @@ const Dashboard = () => {
       const response = await api.get("/foods");
       setFoods(response.data);
     };
-  });
 
-  const handleAddFood = async (food: any) => {
+    execute();
+  }, []);
+
+  const handleAddFood = async (food: IFood) => {
     try {
-      const response = await api.post("/foods", {
+      const response = await api.post<IFood>("/foods", {
         ...food,
         available: true,
       });
@@ -35,9 +36,9 @@ const Dashboard = () => {
     }
   };
 
-  const handleUpdateFood = async (food) => {
+  const handleUpdateFood = async (food: any) => {
     try {
-      const foodUpdated = await api.put(`/foods/${editingFood.id}`, {
+      const foodUpdated = await api.put(`/foods/${editingFood?.id}`, {
         ...editingFood,
         ...food,
       });
@@ -52,7 +53,7 @@ const Dashboard = () => {
     }
   };
 
-  const handleDeleteFood = async (id) => {
+  const handleDeleteFood = async (id: any) => {
     await api.delete(`/foods/${id}`);
 
     const foodsFiltered = foods.filter((food) => food.id !== id);
@@ -61,19 +62,17 @@ const Dashboard = () => {
   };
 
   const toggleModal = () => {
-    setModalOpen((prevState) => !prevState);
+    setModalOpen(!modalOpen);
   };
 
   const toggleEditModal = () => {
-    setEditModalOpen((prevState) => !prevState);
+    setEditModalOpen(!editModalOpen);
   };
 
-  const handleEditFood = (food) => {
+  const handleEditFood = (food: IFood) => {
     setEditingFood(food);
     setEditModalOpen(true);
   };
-
-  //const { modalOpen, editModalOpen, editingFood, foods } = this.state;
 
   return (
     <>
